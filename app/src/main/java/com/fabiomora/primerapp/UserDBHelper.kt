@@ -9,18 +9,31 @@ class UserDBHelper(context: Context): SQLiteOpenHelper(context, "UsuarioDB", nul
     //OnCreate
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL("""
-          CREATE TABLE usuario(
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          nombre TEXT UNIQUE,
-          contrasenia TEXT
-          )  
-        """.trimIndent()) //elimina las tres comilla sin espacio
+        CREATE TABLE usuarios(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nombre TEXT UNIQUE,
+            contrasenia TEXT
+        )
+    """.trimIndent())
 
         db.execSQL("INSERT INTO usuarios (nombre, contrasenia) VALUES ('admin', '1234')")
     }
 
     //onUpgrade
-    override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
-        TODO("Not yet implemented")
+    override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
+        // Elimina la tabla vieja y la vuelve a crear
+        db.execSQL("DROP TABLE IF EXISTS usuarios")
+        onCreate(db)
     }
+    fun login( nombre: String, contrasenia: String): Boolean{
+        var db = readableDatabase
+        var cursor = db.rawQuery(
+            "SELECT * FROM usuarios WHERE nombre =? AND contrasenia=?",
+            arrayOf(nombre,contrasenia)
+        )
+
+        var existe = cursor.count > 0
+        return existe
+    }
+    
 }
