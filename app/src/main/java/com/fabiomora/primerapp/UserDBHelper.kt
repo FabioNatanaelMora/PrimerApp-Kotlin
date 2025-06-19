@@ -72,5 +72,10 @@ class UserDBHelper(context: Context): SQLiteOpenHelper(context, "ClubDB", null, 
         cursor.close()
         return socios
     }
+
+    fun eliminarSocioPorDni(dni: String){
+        val db = writableDatabase
+        db.delete("socios", "dni= ?", arrayOf(dni))
+    }
     
 }

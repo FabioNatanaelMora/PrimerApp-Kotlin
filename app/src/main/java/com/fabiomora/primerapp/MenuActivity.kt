@@ -1,5 +1,6 @@
 package com.fabiomora.primerapp
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -56,6 +57,25 @@ class MenuActivity : AppCompatActivity() {
         val lista = dbHelper.obtenerSocios()
         val adapter = ArrayAdapter(this,android.R.layout.simple_list_item_1,lista)
         listView.adapter = adapter
+
+        listView.setOnItemLongClickListener{ _, _,position,_ ->
+            val item = lista[position]
+            val dni = item.substringAfterLast("-").trim()
+
+            AlertDialog.Builder(this)
+                .setTitle("Eliminar")
+                .setMessage("Queres eliminar al socio: $item")
+                .setPositiveButton("Si"){_ , _ ->
+                    dbHelper.eliminarSocioPorDni(dni)
+                    Toast.makeText(this, "Socio eliminado", Toast.LENGTH_SHORT).show()
+                    mostrarSocios()
+
+                }
+                .setNegativeButton("No", null)
+                .show()
+
+            true
+        }
     }
 }
 
