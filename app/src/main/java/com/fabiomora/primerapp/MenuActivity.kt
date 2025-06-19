@@ -3,9 +3,11 @@ package com.fabiomora.primerapp
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
+import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -15,11 +17,13 @@ import androidx.core.view.WindowInsetsCompat
 
 
 class MenuActivity : AppCompatActivity() {
+    private  lateinit var dbHelper: UserDBHelper // para poderlo usar en todas las funciones
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_menu)
-        var dbHelper = UserDBHelper(this)
+        dbHelper = UserDBHelper(this)
+        mostrarSocios()
 
         val editNombre = findViewById<EditText>(R.id.editNombre)
         val editDni = findViewById<EditText>(R.id.editDNI)
@@ -28,25 +32,32 @@ class MenuActivity : AppCompatActivity() {
         val cardShowForm = findViewById<TextView>(R.id.cardShowForm)
         val formLayout = findViewById<LinearLayout>(R.id.formLayout)
 
-        cardShowForm.setOnClickListener{
+        cardShowForm.setOnClickListener {
             formLayout.visibility = View.VISIBLE
             cardShowForm.visibility = View.GONE
         }
 
-        btnGuardar.setOnClickListener{
+        btnGuardar.setOnClickListener {
             val nombre = editNombre.text.toString().trim()
             val dni = editDni.text.toString().trim()
-            if(dbHelper.insertarSocio(nombre,dni)){
+            if (dbHelper.insertarSocio(nombre, dni)) {
                 Toast.makeText(this, "Socio Agregado", Toast.LENGTH_SHORT).show()
-
-            }else{
+                mostrarSocios()
+            } else {
                 Toast.makeText(this, "Error al agregar socio!", Toast.LENGTH_SHORT).show()
             }
             editNombre.text.clear()
             editDni.text.clear()
-            }
         }
-        }
+    }
+
+    private fun mostrarSocios() {
+        val listView = findViewById<ListView>(R.id.listSocios)
+        val lista = dbHelper.obtenerSocios()
+        val adapter = ArrayAdapter(this,android.R.layout.simple_list_item_1,lista)
+        listView.adapter = adapter
+    }
+}
 
 
 

@@ -57,5 +57,20 @@ class UserDBHelper(context: Context): SQLiteOpenHelper(context, "ClubDB", null, 
 
         return resultado != -1L
     }
+
+    fun obtenerSocios():List<String>{
+        val socios = mutableListOf<String>()             //para que se pueda ir agregando
+        val db = readableDatabase
+        val cursor = db.rawQuery("SELECT nombre, dni FROM socios",null)
+        if(cursor.moveToFirst()){
+            do {
+                val nombre = cursor.getString(0)
+                val dni = cursor.getString(1)
+                socios.add("$nombre - $dni")
+            }while(cursor.moveToNext())  // siempre que halla un registro a traer lo va a repetir
+        }
+        cursor.close()
+        return socios
+    }
     
 }
