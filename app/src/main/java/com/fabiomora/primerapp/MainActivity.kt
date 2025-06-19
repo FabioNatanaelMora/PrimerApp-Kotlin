@@ -1,6 +1,8 @@
 package com.fabiomora.primerapp
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -21,14 +23,17 @@ class MainActivity : AppCompatActivity() {
         val pass = findViewById<EditText>(R.id.passwordEditText)
         val btnLogin = findViewById<Button>(R.id.loginButton)
 
-        btnLogin.setOnClickListener(){
+        btnLogin.setOnClickListener{
             val userString = user.text.toString().trim()
             val passString = pass.text.toString().trim()
 
             if(dbHelper.login(userString,passString)){
                 Toast.makeText(this, "Bienvenido!", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, MenuActivity::class.java)
+                startActivity(intent)
             }else{
                 Toast.makeText(this, "Usuario Incorrecto!", Toast.LENGTH_SHORT).show()
+               // Log.d(null, "Hola") sirve para ver los errores por consola
             }
         }
 

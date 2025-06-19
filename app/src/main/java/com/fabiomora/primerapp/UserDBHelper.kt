@@ -1,10 +1,11 @@
 package com.fabiomora.primerapp
 
+import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
-class UserDBHelper(context: Context): SQLiteOpenHelper(context, "UsuarioDB", null, 1) {
+class UserDBHelper(context: Context): SQLiteOpenHelper(context, "ClubDB", null, 2) {
 
     //OnCreate
     override fun onCreate(db: SQLiteDatabase) {
@@ -14,9 +15,18 @@ class UserDBHelper(context: Context): SQLiteOpenHelper(context, "UsuarioDB", nul
             nombre TEXT UNIQUE,
             contrasenia TEXT
         )
-    """.trimIndent())
+        """.trimIndent())
 
+        //Cargar un Usuario de prueba
         db.execSQL("INSERT INTO usuarios (nombre, contrasenia) VALUES ('admin', '1234')")
+
+       db.execSQL("""
+        CREATE TABLE socios(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nombre TEXT UNIQUE,
+            dni TEXT UNIQUE
+            )
+        """.trimIndent())
     }
 
     //onUpgrade
@@ -34,6 +44,18 @@ class UserDBHelper(context: Context): SQLiteOpenHelper(context, "UsuarioDB", nul
 
         var existe = cursor.count > 0
         return existe
+    }
+
+    fun insertarSocio(nombre: String, dni: String): Boolean {
+        val db = writableDatabase
+        val valores = ContentValues().apply {
+            put("nombre", nombre)
+            put("dni", dni)
+        }
+
+        val resultado = db.insert("socios", null, valores)
+
+        return resultado != -1L
     }
     
 }
